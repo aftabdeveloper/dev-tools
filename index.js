@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 app.listen(8080);
 
@@ -11,8 +12,11 @@ const passwordGenerator = (length)=>{
   }
   return password;
 }
+
+app.use(cors())
 app.get('/password-generator',(req,res)=>{
-    const {query: {length}} = req;
+    let {query: {length}} = req;
+    length = !length ? 8 : length;
     let password = passwordGenerator(length);
       res.status(200).json({
         success: true,
