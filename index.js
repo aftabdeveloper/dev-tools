@@ -31,7 +31,17 @@ const strongPasswordChecker = (password)=>{
 
 }
 
-app.use(cors())
+//browser security
+app.use(cors({
+  origin: "http://127.0.0.1:5500"
+}))
+
+//postman security
+app.use((req,res,next)=>{
+  const { authorization } = req.headers;
+  if(authorization === 'api_425scsabsdcasdAD') return next();
+  res.status(401).send("Unauthenticated")
+})
 app.get('/password-generator',(req,res)=>{
     let {query: {length}} = req;
     length = !length ? 8 : length;
@@ -42,7 +52,7 @@ app.get('/password-generator',(req,res)=>{
     })
 })
 
-app.get("/encrypt",(req,res)=>{
+app.post("/encrypt",(req,res)=>{
   let {query:{message}} = req;
   message = !message ? "Hello World" : message;
   const encryptMessage= messageEncryption(message)
@@ -52,7 +62,7 @@ app.get("/encrypt",(req,res)=>{
   })
 })
 
-app.get("/md5",(req,res)=>{
+app.post("/md5",(req,res)=>{
   let {query:{password}} = req;
   password = !password ? "Hello World" : password;
   const encryptPassword = passwordEncryption(password)
